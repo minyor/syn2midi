@@ -7,9 +7,9 @@ There's plenty of Synthesia piano video lessons on youtube though..
 So here you have it. A youtube video lesson to MIDI converter.
 
 ## Usage:
-Download video lesson using one of online youtube downloader like this one:
+Download video lesson using one of online youtube downloaders like this one:
 http://en.savefrom.net/1-how-to-download-youtube-video/
-So, this video, ror example:
+So, this video, for example:
 https://www.youtube.com/watch?v=JHdbjCLDg2A
 
 Generate MIDI file using:
