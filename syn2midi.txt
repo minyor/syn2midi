@@ -1,0 +1,1 @@
+./Release/main.cpp.o ./Release/midi.cpp.o ./Release/midifile-master_src-library_Binasc.cpp.o ./Release/midifile-master_src-library_MidiEvent.cpp.o ./Release/midifile-master_src-library_MidiEventList.cpp.o ./Release/midifile-master_src-library_MidiFile.cpp.o ./Release/midifile-master_src-library_MidiMessage.cpp.o ./Release/midifile-master_src-library_Options.cpp.o   

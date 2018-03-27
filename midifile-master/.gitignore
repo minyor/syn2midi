@@ -1,0 +1,11 @@
+
+.*
+!.gitignore
+
+_site
+temp
+
+bin
+obj
+lib
+err
