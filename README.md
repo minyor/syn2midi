@@ -13,4 +13,4 @@ So, this video, for example:
 https://www.youtube.com/watch?v=JHdbjCLDg2A
 - Choose which mask image best suits your video (82 or 88 notes).
 - Generate MIDI file using:
-syn2midi -m mask.bmp -i IT(2017)-Every27Years(Synthesia).mp4 -o Every27Years.midi
+syn2midi -m mask.bmp -i Every27Years.mp4 -o Every27Years.midi
