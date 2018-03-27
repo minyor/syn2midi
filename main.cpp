@@ -115,9 +115,10 @@ int main(int argc, char **argv)
 	//int ticks = 60; int msPerTick = 1000;
 	//int ticks = 120; int msPerTick = 500;
 	//int ticks = 326; int msPerTick = 184;
-	int ticks = 26; int msPerTick = 500;
+	int ticks = 25; int msPerTick = 500;
 	int shiftOctave = 2;
-	int shiftKey = shiftOctave * 12;
+	int shiftNote = notes.size() == 88 ? -3 : 0;
+	int shiftKey = shiftOctave * 12 + shiftNote;
 	miniBegin(ticks);
 	miniAddChannel(MIDI_HAND_LEFT, 0);
 	miniAddChannel(MIDI_HAND_RIGHT, 0);
@@ -127,8 +128,18 @@ int main(int argc, char **argv)
 		BufferRGBA left(255, 255, 0);
 		BufferRGBA right(255, 0, 0);
 		
-		const uint32_t colorsCount = 4;
-		BufferRGBA colors[colorsCount] = {BufferRGBA(252, 182, 92), BufferRGBA(246, 126, 16), BufferRGBA(237, 120, 122), BufferRGBA(232, 79, 78)};
+		const uint32_t colorsCount = 8;
+		BufferRGBA colors[colorsCount] = {
+			BufferRGBA(40, 96, 167),
+			BufferRGBA(112, 167, 211),
+			BufferRGBA(252, 182, 92),
+			BufferRGBA(246, 126, 16),
+			
+			BufferRGBA(237, 120, 122),
+			BufferRGBA(232, 79, 78),
+			BufferRGBA(140, 242, 44),
+			BufferRGBA(92, 170, 11)
+		};
 		uint32_t framesCount = 0;
 		for(uint32_t f=0; video.nextFrame(frame); ++f) {
 			float ms = (float(f) / fps) * 1000;
@@ -147,7 +158,7 @@ int main(int argc, char **argv)
 				}
 				if(shade.rgba != white.rgba && shade.rgba != black.rgba) {
 					if(note.hand == MIDI_HAND_NONE) {
-						if(fittestColor < 2) {
+						if(fittestColor < 4) {
 							note.hand = MIDI_HAND_LEFT;
 							miniKeyBegin(note.hand, time, key);
 						}
