@@ -61,8 +61,34 @@ bool extractNotePos(ColoredBuffer &mask, BufferRGBA color, std::vector<Note> &no
 }
 
 void printUsage(int argc, char **argv) {
-	fprintf(stderr, "Usage: %s [-i video file] [-o midi file] [-m mask BMP image file]\n", argv[0]);
+	fprintf(stderr, "Usage: %s [-i video file] [-o midi file] [-m mask BMP image file]\n\n", argv[0]);
+	fprintf(stderr, "Optional: [-l left hand key colors] [-r right hand key colors]\n");
+	fprintf(stderr, "Defaults are: (make sure there's no spaces in color paremeters)\n");
+	fprintf(stderr, "        -l (40,96,167)(112,167,211)(252,182,92)(246,126,16)\n");
+	fprintf(stderr, "        -r (237,120,122)(232,79,78)(140,242,44)(92,170,11)\n\n");
 	printf("Note: It's recomended for new custom mask image, to open it in paint.exe and re-save it before use.\n");
+}
+
+void parceColorConponent(std::string str, BufferRGBA *out) {
+	int c = 0;
+	auto i = std::string::npos;
+	while((i=str.find(',')) != std::string::npos) {
+		std::string val = str.substr(0, i);
+		str = str.substr(i + 1);
+		(*out)[c++] = std::stoi(val);
+	}
+	(*out)[c] = std::stoi(str);
+}
+void parceColors(std::string str, BufferRGBA *out) {
+	while(str[0] == '(') str = str.substr(1);
+	while(str[str.length()-1] == ')') str = str.substr(0, str.length()-1);
+	auto i = std::string::npos;
+	while((i=str.find(")(")) != std::string::npos) {
+		std::string val = str.substr(0, i);
+		str = str.substr(i + 2);
+		parceColorConponent(val, out++);
+	}
+	parceColorConponent(str, out);
 }
 
 int main(int argc, char **argv)
@@ -70,19 +96,43 @@ int main(int argc, char **argv)
 	std::string fileInput;
 	std::string fileOutput;
 	std::string fileMask;
+	std::string colorsStrL;
+	std::string colorsStrR;
+
+	const uint32_t colorsCount = 8;
+	BufferRGBA colors[colorsCount] = {
+		BufferRGBA(40, 96, 167),
+		BufferRGBA(112, 167, 211),
+		BufferRGBA(252, 182, 92),
+		BufferRGBA(246, 126, 16),
+		
+		BufferRGBA(237, 120, 122),
+		BufferRGBA(232, 79, 78),
+		BufferRGBA(140, 242, 44),
+		BufferRGBA(92, 170, 11)
+	};
+
 	int opt;
-	while ((opt = getopt (argc, argv, "i:o:m:")) != -1)
+	while ((opt = getopt (argc, argv, "i:o:m:l:r:h")) != -1)
 	{
 		switch (opt)
 		{
 		case 'i': fileInput = optarg; break;
 		case 'o': fileOutput = optarg; break;
 		case 'm': fileMask = optarg; break;
+		case 'l': colorsStrL = optarg; break;
+		case 'r': colorsStrR = optarg; break;
 		case 'h':
 		default: /* '?' */
 			printUsage(argc, argv);
 			exit(EXIT_FAILURE);
 		}
+	}
+	if(colorsStrL != "") {
+		parceColors(colorsStrL, &colors[0]);
+	}
+	if(colorsStrR != "") {
+		parceColors(colorsStrR, &colors[4]);
 	}
 	if(fileInput == "" || fileOutput == "" || fileMask == "") {
 		fprintf(stderr, "Error: -i, -o and -m args are mandatory!\n");
@@ -108,7 +158,7 @@ int main(int argc, char **argv)
 
 	uint32_t width = (uint32_t)video.width;
 	uint32_t height = (uint32_t)video.height;
-	uint32_t fps = 30;
+	uint32_t fps = video.fps;
 	float scale = (float)width / mask.getW();
 	ColoredBuffer frame(width, height);
 
@@ -127,19 +177,7 @@ int main(int argc, char **argv)
 		BufferRGBA black(0, 0, 0);
 		BufferRGBA left(255, 255, 0);
 		BufferRGBA right(255, 0, 0);
-		
-		const uint32_t colorsCount = 8;
-		BufferRGBA colors[colorsCount] = {
-			BufferRGBA(40, 96, 167),
-			BufferRGBA(112, 167, 211),
-			BufferRGBA(252, 182, 92),
-			BufferRGBA(246, 126, 16),
-			
-			BufferRGBA(237, 120, 122),
-			BufferRGBA(232, 79, 78),
-			BufferRGBA(140, 242, 44),
-			BufferRGBA(92, 170, 11)
-		};
+
 		uint32_t framesCount = 0;
 		for(uint32_t f=0; video.nextFrame(frame); ++f) {
 			float ms = (float(f) / fps) * 1000;

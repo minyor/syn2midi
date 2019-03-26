@@ -46,6 +46,7 @@ public:
 	int32_t totalFrames;
 	int32_t width;
 	int32_t height;
+	int32_t fps;
 
 public:
 	/**
@@ -59,6 +60,7 @@ public:
 		totalFrames = 0;
 		width = 0;
 		height = 0;
+		fps = 0;
 
 		frameLocation = 0;
 
@@ -206,11 +208,13 @@ public:
 
 		width = pCodecCtx->width;
 		height = pCodecCtx->height;
-		//printf("W=%d; H=%d", width, height);
+		fps = (pCodecCtx->time_base.den / pCodecCtx->time_base.num) / 2 + 1;
+		//printf("W=%d; H=%d\n", width, height);
 
 		printf("  Name: '%s'\n", filename);
 		printf(" Width: '%d'\n", width);
 		printf("Height: '%d'\n", height);
+		printf("   Fps: '%d'\n", fps);
 		loaded = true;
 	}
 
