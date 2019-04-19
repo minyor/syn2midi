@@ -16,7 +16,7 @@ https://www.youtube.com/watch?v=JHdbjCLDg2A
 	syn2midi -m mask.bmp -i Every27Years.mp4 -o Every27Years.midi
 
 ## Custom key colors
-Optionally you can specify 8 key colors to use in notes parsing, 4 colors for left hand and 4 for right hand.
+Optionally you can specify up to 8 key colors to use in notes parsing, 4 colors for left hand and 4 for right hand.
 For example, here are the default colors (make sure there's no spaces in color paremeters):
 
 syn2midi -m mask.bmp -i Every27Years.mp4 -o Every27Years.midi -l (40,96,167)(112,167,211)(252,182,92)(246,126,16) -r (237,120,122)(232,79,78)(140,242,44)(92,170,11)
