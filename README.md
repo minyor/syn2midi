@@ -6,6 +6,11 @@ It was always upsetting me, the lack of midi files to learn new music in interne
 There's plenty of Synthesia piano video lessons on youtube though..
 So here you have it. A youtube video lesson to MIDI converter.
 
+## Installation:
+- For Windows, download and unpack lattest binary archive from here:
+https://github.com/minyor/syn2midi/releases
+- For other OS'ses you have to compile it using CodeLite IDE
+
 ## Usage:
 - Download video lesson using one of online youtube downloaders like this one:
 http://en.savefrom.net/1-how-to-download-youtube-video/
