@@ -9,7 +9,7 @@ So here you have it. A youtube video lesson to MIDI converter.
 ## Installation:
 - For Windows, download and unpack lattest binary archive from here:
 https://github.com/minyor/syn2midi/releases
-- For other OS'ses you have to compile it using CodeLite IDE
+- For other OS'ses you have to compile it using CodeLite IDE or similar tools
 
 ## Usage:
 - Download video lesson using one of online youtube downloaders like this one:
