@@ -2,7 +2,13 @@
  * Author 2011-2012 Eugene Minov <minov.eug@gmail.com>
  */
 
+using namespace std;
+
+#include <cstring>
 #include <math.h>
+#include <sstream>
+#include <string>
+#include <iomanip>
 
 /**
  * Class to represent a image in form of 2D array
@@ -187,6 +193,16 @@ struct BufferRGBA
 		}
 		return ret;
 	}
+    
+    string toWebColor() {
+        ostringstream osstream;
+        osstream << setfill('0') << hex 
+            << setw(2) << (uint32_t) operator[](0) 
+            << setw(2) << (uint32_t) operator[](1) 
+            << setw(2) << (uint32_t) operator[](2) 
+            << setw(2) << (uint32_t) operator[](3);
+        return osstream.str();
+    }
 
 	/**
 	 * Component access by index operator
@@ -194,6 +210,10 @@ struct BufferRGBA
 	 * @return reference to 8-bit value represented desired component
 	 */
 	__inline uint8_t &operator[](uint32_t index) { return ((uint8_t *)&rgba)[index]; }
+
+    bool operator<(const BufferRGBA& rhs) const {
+        return rgba < rhs.rgba;
+    }
 };
 
 #define IndexedBuffer Buffer<uint8_t>
