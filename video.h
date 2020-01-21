@@ -2,8 +2,6 @@
 /**
  * Author 2011-2012 Eugene Minov <minov.eug@gmail.com>
  */
- 
-#include "buffer.h"
 
 /**
  * Include needed headers

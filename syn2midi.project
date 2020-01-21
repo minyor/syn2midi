@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="syn2midi" InternalType="Console">
+<CodeLite_Project Name="syn2midi" InternalType="Console" Version="11000">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
@@ -18,6 +18,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="report.cpp"/>
+    <File Name="report.h"/>
     <File Name="main.cpp"/>
     <File Name="midi.cpp"/>
     <File Name="buffer.h"/>

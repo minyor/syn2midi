@@ -5,11 +5,21 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include <map>
+#include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <getopt.h>
+#include <set>
+#include <functional>
 
+#include "buffer.h"
 #include "video.h"
+#include "report.h"
 #include "processing.h"
+
+
+using namespace std;
 
 bool saveMidi(const std::string &filename);
 
@@ -62,7 +72,7 @@ bool extractNotePos(ColoredBuffer &mask, BufferRGBA color, std::vector<Note> &no
 
 void printUsage(int argc, char **argv) {
 	fprintf(stderr, "Usage: %s [-i video file] [-o midi file] [-m mask BMP image file]\n\n", argv[0]);
-	fprintf(stderr, "Optional: [-l left hand key colors] [-r right hand key colors]\n");
+	fprintf(stderr, "Optional: [-l left hand key colors] [-r right hand key colors] [-s start time in seconds] [-e end time in seconds] [-R boolean, include to generate report]\n");
 	fprintf(stderr, "Defaults are: (make sure there's no spaces in color paremeters)\n");
 	fprintf(stderr, "        -l (40,96,167)(112,167,211)(252,182,92)(246,126,16)\n");
 	fprintf(stderr, "        -r (237,120,122)(232,79,78)(140,242,44)(92,170,11)\n\n");
@@ -91,6 +101,8 @@ void parceColors(std::string str, BufferRGBA *out) {
 	parceColorConponent(str, out);
 }
 
+float MINIMUM_DIFF = 10000;
+
 int main(int argc, char **argv)
 {
 	std::string fileInput;
@@ -98,8 +110,11 @@ int main(int argc, char **argv)
 	std::string fileMask;
 	std::string colorsStrL;
 	std::string colorsStrR;
+    int startTimeInSeconds = 0;
+    int endTimeInSeconds = -1;
+    bool isCreatingReport = false;
 
-	const uint32_t colorsCount = 8;
+	const uint32_t colorsCount = 10;
 	BufferRGBA colors[colorsCount] = {
 		BufferRGBA(40, 96, 167),
 		BufferRGBA(112, 167, 211),
@@ -109,11 +124,13 @@ int main(int argc, char **argv)
 		BufferRGBA(237, 120, 122),
 		BufferRGBA(232, 79, 78),
 		BufferRGBA(140, 242, 44),
-		BufferRGBA(92, 170, 11)
+		BufferRGBA(92, 170, 11),
+        BufferRGBA(0,0,0),
+        BufferRGBA(255,255,255)
 	};
 
 	int opt;
-	while ((opt = getopt (argc, argv, "i:o:m:l:r:h")) != -1)
+	while ((opt = getopt (argc, argv, "i:o:m:l:r:s:e:R:h")) != -1)
 	{
 		switch (opt)
 		{
@@ -122,6 +139,9 @@ int main(int argc, char **argv)
 		case 'm': fileMask = optarg; break;
 		case 'l': colorsStrL = optarg; break;
 		case 'r': colorsStrR = optarg; break;
+        case 's': startTimeInSeconds = stoi(optarg); break;
+        case 'e': endTimeInSeconds = stoi(optarg); break;
+        case 'R': isCreatingReport = string(optarg).compare("true") == 0; break;
 		case 'h':
 		default: /* '?' */
 			printUsage(argc, argv);
@@ -145,6 +165,16 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Error: Cannot load mask image.\n");
 		exit(EXIT_FAILURE);
 	}
+    
+    DummyReport dummyReport = DummyReport();
+    Report realReport = Report();
+    BaseReport *report = isCreatingReport 
+        ? (BaseReport*) &realReport 
+        : (BaseReport*) &dummyReport; 
+    
+    cout << "start: " << startTimeInSeconds << endl;
+    cout << "end: " << endTimeInSeconds << endl;
+    cout << "isCreatingReport: " << isCreatingReport << endl;
 
 	std::vector<Note> notes;
 	extractNotePos(mask, BufferRGBA(0, 0, 255), notes);
@@ -161,7 +191,7 @@ int main(int argc, char **argv)
 	uint32_t fps = video.fps;
 	float scale = (float)width / mask.getW();
 	ColoredBuffer frame(width, height);
-
+    
 	//int ticks = 60; int msPerTick = 1000;
 	//int ticks = 120; int msPerTick = 500;
 	//int ticks = 326; int msPerTick = 184;
@@ -182,33 +212,50 @@ int main(int argc, char **argv)
 		for(uint32_t f=0; video.nextFrame(frame); ++f) {
 			float ms = (float(f) / fps) * 1000;
 			int time = (ms / msPerTick) * ticks;
+            
+            int timeInSeconds = ms / 1000; 
+            if (timeInSeconds < startTimeInSeconds) {
+                continue;
+            }
+            
+            if (endTimeInSeconds != -1 && timeInSeconds > endTimeInSeconds) {
+                break;
+            }
+            
 			for(uint32_t n=0; n<notes.size(); ++n) {
 				Note &note = notes[n];
 				int key = shiftKey + n;
 				BufferRGBA color = frame(note.x * scale, note.y * scale);
 				BufferRGBA shade = color; shade.contrast(10000.0f);
-				float smallerDiff = 10000;
+				float smallerDiff = MINIMUM_DIFF;
 				uint32_t fittestColor = 0;
 				for(uint32_t c=0; c<colorsCount; ++c) {
 					float diff = color.diff(colors[c]);
-					if(diff >= smallerDiff) continue;
+					if(diff >= smallerDiff) {
+                        continue;
+                    }
 					smallerDiff = diff; fittestColor = c;
 				}
-				if(shade.rgba != white.rgba && shade.rgba != black.rgba) {
-					if(note.hand == MIDI_HAND_NONE) {
-						if(fittestColor < 4) {
-							note.hand = MIDI_HAND_LEFT;
-							miniKeyBegin(note.hand, time, key);
-						}
-						else {
-							note.hand = MIDI_HAND_RIGHT;
-							miniKeyBegin(note.hand, time, key);
-						}
-					}
-					//printf("n=%d c=%d x=%d y=%d color=<%d,%d,%d>\n", n, note.y>320, note.x, note.y, color[0], color[1], color[2]);
-				}
-				else {
-					if(note.hand != MIDI_HAND_NONE) {
+                
+                if (smallerDiff == MINIMUM_DIFF) {
+                    report->recordUnfitColor(color);
+                } else {
+                    report->recordMatchedColor(colors[fittestColor], color);
+                }
+                                
+                if (note.hand == MIDI_HAND_NONE) {
+                    if (fittestColor < 4) {
+                        note.hand = MIDI_HAND_LEFT;
+                        miniKeyBegin(note.hand, time, key);
+                    }
+                    else if (fittestColor < 8) {
+                        note.hand = MIDI_HAND_RIGHT;
+                        miniKeyBegin(note.hand, time, key);
+                    }
+                    //printf("n=%d c=%d x=%d y=%d color=<%d,%d,%d>\n", n, note.y>320, note.x, note.y, color[0], color[1], color[2]);                    
+                }
+                if (note.hand != MIDI_HAND_NONE) {
+                    if (fittestColor >= 8) {
 						miniKeyEnd(note.hand, time, key);
 						note.hand = MIDI_HAND_NONE;
 					}
@@ -216,6 +263,9 @@ int main(int argc, char **argv)
 			}
 			++framesCount;
 		}
+        
+        report->print(colors, colorsCount);
+        
 		printf("framesCount=%d\n", framesCount);
 	}
 	miniEnd(fileOutput.c_str());
