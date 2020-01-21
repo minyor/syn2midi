@@ -24,11 +24,11 @@ using namespace std;
 bool saveMidi(const std::string &filename);
 
 enum MIDI_HAND {MIDI_HAND_NONE=0, MIDI_HAND_LEFT=2, MIDI_HAND_RIGHT=3};
-void miniKeyBegin(int channel, int time, int key);
-void miniKeyEnd(int channel, int time, int key);
-void miniAddChannel(int channel, int instrument);
-void miniBegin(int ticks);
-bool miniEnd(const std::string &filename);
+void midiKeyBegin(int channel, int time, int key);
+void midiKeyEnd(int channel, int time, int key);
+void midiAddChannel(int channel, int instrument);
+void midiBegin(int ticks);
+bool midiEnd(const std::string &filename);
 
 struct Note {
 	MIDI_HAND hand = MIDI_HAND_NONE;
@@ -72,7 +72,10 @@ bool extractNotePos(ColoredBuffer &mask, BufferRGBA color, std::vector<Note> &no
 
 void printUsage(int argc, char **argv) {
 	fprintf(stderr, "Usage: %s [-i video file] [-o midi file] [-m mask BMP image file]\n\n", argv[0]);
-	fprintf(stderr, "Optional: [-l left hand key colors] [-r right hand key colors] [-s start time in seconds] [-e end time in seconds] [-R boolean, include to generate report]\n");
+	fprintf(stderr, "Optional: [-l left hand key colors] [-r right hand key colors]\n");
+	fprintf(stderr, "          [-t transpose notes shift, can be negative. 0 is default]\n");
+	fprintf(stderr, "          [-s start time in seconds] [-e end time in seconds]\n");
+	fprintf(stderr, "          [-R boolean, include to generate report]\n");
 	fprintf(stderr, "Defaults are: (make sure there's no spaces in color paremeters)\n");
 	fprintf(stderr, "        -l (40,96,167)(112,167,211)(252,182,92)(246,126,16)\n");
 	fprintf(stderr, "        -r (237,120,122)(232,79,78)(140,242,44)(92,170,11)\n\n");
@@ -110,6 +113,7 @@ int main(int argc, char **argv)
 	std::string fileMask;
 	std::string colorsStrL;
 	std::string colorsStrR;
+	int transpose = 0;
     int startTimeInSeconds = 0;
     int endTimeInSeconds = -1;
     bool isCreatingReport = false;
@@ -130,7 +134,7 @@ int main(int argc, char **argv)
 	};
 
 	int opt;
-	while ((opt = getopt (argc, argv, "i:o:m:l:r:s:e:R:h")) != -1)
+	while ((opt = getopt (argc, argv, "i:o:m:l:r:t:s:e:R:h")) != -1)
 	{
 		switch (opt)
 		{
@@ -139,6 +143,7 @@ int main(int argc, char **argv)
 		case 'm': fileMask = optarg; break;
 		case 'l': colorsStrL = optarg; break;
 		case 'r': colorsStrR = optarg; break;
+		case 't': transpose = stoi(optarg); break;
         case 's': startTimeInSeconds = stoi(optarg); break;
         case 'e': endTimeInSeconds = stoi(optarg); break;
         case 'R': isCreatingReport = string(optarg).compare("true") == 0; break;
@@ -172,6 +177,7 @@ int main(int argc, char **argv)
         ? (BaseReport*) &realReport 
         : (BaseReport*) &dummyReport; 
     
+    cout << "transpose: " << transpose << endl;
     cout << "start: " << startTimeInSeconds << endl;
     cout << "end: " << endTimeInSeconds << endl;
     cout << "isCreatingReport: " << isCreatingReport << endl;
@@ -198,10 +204,10 @@ int main(int argc, char **argv)
 	int ticks = 25; int msPerTick = 500;
 	int shiftOctave = 2;
 	int shiftNote = notes.size() == 88 ? -3 : 0;
-	int shiftKey = shiftOctave * 12 + shiftNote;
-	miniBegin(ticks);
-	miniAddChannel(MIDI_HAND_LEFT, 0);
-	miniAddChannel(MIDI_HAND_RIGHT, 0);
+	int shiftKey = shiftOctave * 12 + shiftNote + transpose;
+	midiBegin(ticks);
+	midiAddChannel(MIDI_HAND_LEFT, 0);
+	midiAddChannel(MIDI_HAND_RIGHT, 0);
 	{
 		BufferRGBA white(255, 255, 255);
 		BufferRGBA black(0, 0, 0);
@@ -246,17 +252,17 @@ int main(int argc, char **argv)
                 if (note.hand == MIDI_HAND_NONE) {
                     if (fittestColor < 4) {
                         note.hand = MIDI_HAND_LEFT;
-                        miniKeyBegin(note.hand, time, key);
+                        midiKeyBegin(note.hand, time, key);
                     }
                     else if (fittestColor < 8) {
                         note.hand = MIDI_HAND_RIGHT;
-                        miniKeyBegin(note.hand, time, key);
+                        midiKeyBegin(note.hand, time, key);
                     }
                     //printf("n=%d c=%d x=%d y=%d color=<%d,%d,%d>\n", n, note.y>320, note.x, note.y, color[0], color[1], color[2]);                    
                 }
                 if (note.hand != MIDI_HAND_NONE) {
                     if (fittestColor >= 8) {
-						miniKeyEnd(note.hand, time, key);
+						midiKeyEnd(note.hand, time, key);
 						note.hand = MIDI_HAND_NONE;
 					}
 				}
@@ -268,7 +274,7 @@ int main(int argc, char **argv)
         
 		printf("framesCount=%d\n", framesCount);
 	}
-	miniEnd(fileOutput.c_str());
+	midiEnd(fileOutput.c_str());
 
 	return 0;
 }
