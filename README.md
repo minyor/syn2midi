@@ -33,4 +33,5 @@ Optional: [-s start time in seconds] [-e end time in seconds]
 
 Optional: [-R boolean, include to generate report]
 
-## Note: not all synthesia videos, you find, will work with included mask images. You might need to create your own mask.
+## Note:
+Not all synthesia videos you find will work with included mask images. You might need to create your own mask.
