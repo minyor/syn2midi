@@ -27,7 +27,7 @@ For example, here are the default colors (make sure there's no spaces in color p
 syn2midi -m mask.bmp -i Every27Years.mp4 -o Every27Years.midi -l (40,96,167)(112,167,211)(252,182,92)(246,126,16) -r (237,120,122)(232,79,78)(140,242,44)(92,170,11)
 
 ## Other options:
-Optional: [-t transpose notes shift, can be negative. 0 is default]
+Optional: [-t transpose notes shift, can be negative -t-1. 0 is default]
 
 Optional: [-s start time in seconds] [-e end time in seconds]
 
