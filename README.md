@@ -14,7 +14,7 @@ https://github.com/minyor/syn2midi/releases
 ## Usage:
 - Download video lesson using one of online youtube downloaders like this one:
 http://en.savefrom.net/1-how-to-download-youtube-video/
-So, this video, for example:
+So, this video, for example (make sure to select mp4 conversion format):
 https://www.youtube.com/watch?v=JHdbjCLDg2A
 - Choose which mask image best suits your video (82 or 88 notes).
 - Generate MIDI file using:
