@@ -37,7 +37,7 @@ Optional: [-R boolean, include to generate report]
 Not all synthesia videos you find will work with included mask images. You might need to create your own mask.
 These are the recommended steps to create matching mask image for your video:
 - Play a video, pause it when no piano key is pressed!
-- Now make a fulscreen screenshot (best if you can use video player's screenshot functionality if it has one)
+- Now make a fullscreen screenshot (best if you can use video player's screenshot functionality if it has one)
 - Make sure that aspect ratio of a screenshot image matches aspect ratio of a video (This is important, otherway result may be wrong)
 - Open screenshot in 2D image editor, for example GIMP, set pen color as RGB(0,0,255) i.e Blue.
 - Place blue dot of a diameter about 75% of key width at each white and black key (try to avoid places with markings and other artifacts)
