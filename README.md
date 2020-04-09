@@ -2,7 +2,7 @@
 Create pianobooster midi from youtube piano video lessons (Synthesia).
 
 I can't read sheet music very well and prefer to use pianobooster to learn.
-It was always upsetting me, the lack of midi files to learn new music in internet.
+It was always upset me, the lack of midi files to learn new music in the internet.
 There's plenty of Synthesia piano video lessons on youtube though..
 So here you have it. A youtube video lesson to MIDI converter.
 
