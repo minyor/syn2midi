@@ -40,7 +40,7 @@ These are the recommended steps to create matching mask image for your video:
 - Now make a fulscreen screenshot (best if you can use video player's screenshot functionality if it has one)
 - Make sure that aspect ratio of a screenshot image matches aspect ratio of a video (This is important, otherway result may be wrong)
 - Open screenshot in 2D image editor, for example GIMP, set pen color as RGB(0,0,255) i.e Blue.
-- Place blue dot of diameter about 75% of key width at each white and black key (try to avoid places with markings and other artifacts)
+- Place blue dot of a diameter about 75% of key width at each white and black key (try to avoid places with markings and other artifacts)
 - Export your screenshot as BMP 24bit file format (Click at 'Do not write color space information')
 
 Thats it, your mask should be ready
