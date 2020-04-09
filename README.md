@@ -44,3 +44,6 @@ These are the recommended steps to create matching mask image for your video:
 - Export your screenshot as BMP 24bit file format (Click at 'Do not write color space information')
 
 Thats it, your mask should be ready
+
+ Keep in mind that you can reuse your generated masks.
+ If visually key layout in the video is the same, then there are good chances that mask will work.
