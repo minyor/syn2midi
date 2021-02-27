@@ -48,5 +48,5 @@ Thats it, your mask should be ready
  Keep in mind that you can reuse your generated masks.
  If visually key layout in the video is the same, then there are good chances that mask will work.
  
- ## Support this project
+ ## Support this project:
  <a target="_blank" href="https://donorbox.org/syn2midi-developing"><img src="https://donorbox.org/images/png-donate/button-medium-blue.png" /></a>
