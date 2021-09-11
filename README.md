@@ -19,7 +19,7 @@ https://github.com/minyor/syn2midi/releases
 http://en.savefrom.net/1-how-to-download-youtube-video/
 So, this video, for example (make sure to select mp4 conversion format):
 https://www.youtube.com/watch?v=JHdbjCLDg2A
-- Choose which mask image best suits your video (82 or 88 notes).
+- Choose which mask image best suits your video (82 or 88 notes). Or generate your own (see instructions below)
 - Generate MIDI file using:
 	syn2midi -m mask.bmp -i Every27Years.mp4 -o Every27Years.midi
 
@@ -34,7 +34,7 @@ Optional: [-t transpose notes shift, can be negative -t-1. 0 is default]
 
 Optional: [-s start time in seconds] [-e end time in seconds]
 
-Optional: [-R boolean, include to generate report]
+Optional: [-R boolean, include to generate report] (thanks to https://github.com/DanLatimer)
 
 ## Custom Mask creation:
 Not all synthesia videos you find will work with included mask images. You might need to create your own mask.
