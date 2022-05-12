@@ -7,7 +7,7 @@ There's plenty of Synthesia piano video lessons on youtube though..
 So here you have it. A youtube video lesson to MIDI converter.
 
 ## If you like it, please support:
-  <a href="https://www.patreon.com/bePatron?u=51402701" data-patreon-widget-type="become-patron-button">Support!</a>
+  <a href="http://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=79P2FPXSDF64G" data-patreon-widget-type="become-patron-button">Support!</a>
 
 ## Installation:
 - For Windows, download and unpack lattest binary archive from here:
